@@ -1,5 +1,8 @@
 package com.tsayvyac.flashcard.dto;
 
-public record CardSetDto(
+import java.util.Set;
 
+public record CardSetDto(
+        String name,
+        Set<FlashcardDto> flashcards
 ) {}

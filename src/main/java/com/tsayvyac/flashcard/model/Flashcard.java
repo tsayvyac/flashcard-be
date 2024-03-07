@@ -19,14 +19,25 @@ public class Flashcard {
     @SequenceGenerator(name = "flashcard_seq_gen", sequenceName = "flashcard_seq", allocationSize = 1)
     private Long id;
 
+    @Column(nullable = false)
+    private String front;
+
+    @Column(nullable = false)
+    private String back;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "set_id", nullable = false)
+    @ToString.Exclude
+    private CardSet cardSet;
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null) return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy hibernateProxy
+        if (o == null || this.getClass() != o.getClass()) return false;
+        Class<?> oEffectiveClass = (o instanceof HibernateProxy hibernateProxy)
                 ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass()
                 : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy hibernateProxy
+        Class<?> thisEffectiveClass = (this instanceof HibernateProxy hibernateProxy)
                 ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass()
                 : this.getClass();
 
@@ -37,7 +48,7 @@ public class Flashcard {
 
     @Override
     public final int hashCode() {
-        return this instanceof HibernateProxy hibernateProxy
+        return (this instanceof HibernateProxy hibernateProxy)
                 ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass().hashCode()
                 : getClass().hashCode();
     }
