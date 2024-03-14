@@ -1,6 +1,7 @@
 package com.tsayvyac.flashcard.dto;
 
-public record FlashcardDto(
+public record FlashcardModelDto(
+        Long id,
         String front,
         String back
 ) {}

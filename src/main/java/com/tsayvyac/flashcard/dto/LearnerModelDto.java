@@ -1,6 +1,6 @@
 package com.tsayvyac.flashcard.dto;
 
-public record LearnerDto(
+public record LearnerModelDto(
         String username,
         String email
 ) {}

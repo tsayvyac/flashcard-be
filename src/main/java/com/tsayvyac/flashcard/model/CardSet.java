@@ -13,7 +13,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = {"flashcards"})
 public class CardSet {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "card_set_seq_gen")
@@ -23,13 +23,12 @@ public class CardSet {
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "learner_id", nullable = false)
-    @ToString.Exclude
-    private Learner learner;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "learner_id", nullable = false)
+//    @ToString.Exclude
+//    private Learner learner;
 
-    @OneToMany(mappedBy = "cardSet", cascade = CascadeType.REMOVE)
-    @ToString.Exclude
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Flashcard> flashcards;
 
     @Override

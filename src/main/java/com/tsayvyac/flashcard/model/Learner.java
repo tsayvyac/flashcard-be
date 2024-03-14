@@ -28,10 +28,10 @@ public class Learner {
 
     @Column(nullable = false)
     private String email;
-
-    @OneToMany(mappedBy = "learner", cascade = CascadeType.REMOVE)
-    @ToString.Exclude
-    private Set<CardSet> cardSets;
+//
+//    @OneToMany(mappedBy = "learner", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @ToString.Exclude
+//    private Set<CardSet> cardSets;
 
     @Override
     public final boolean equals(Object o) {

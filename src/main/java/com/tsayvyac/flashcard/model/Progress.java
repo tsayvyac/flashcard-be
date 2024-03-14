@@ -1,10 +1,11 @@
 package com.tsayvyac.flashcard.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -14,22 +15,23 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Flashcard {
+public class Progress {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "flashcard_seq_gen")
-    @SequenceGenerator(name = "flashcard_seq_gen", sequenceName = "flashcard_seq", allocationSize = 1)
+    @Column(name = "flashcard_id")
     private Long id;
 
     @Column(nullable = false)
-    private String front;
+    private Integer repetitions;
 
     @Column(nullable = false)
-    private String back;
+    @Temporal(TemporalType.DATE)
+    private Date nextDate;
 
-    @OneToOne(mappedBy = "flashcard", cascade = CascadeType.ALL, orphanRemoval = true)
-    @PrimaryKeyJoinColumn
-    @JsonManagedReference
-    private Progress progress;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @MapsId
+    @JoinColumn(name = "flashcard_id")
+    @JsonBackReference
+    private Flashcard flashcard;
 
     @Override
     public final boolean equals(Object o) {
@@ -43,8 +45,8 @@ public class Flashcard {
                 : this.getClass();
 
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Flashcard flashcard = (Flashcard) o;
-        return getId() != null && Objects.equals(getId(), flashcard.getId());
+        Progress progress = (Progress) o;
+        return getId() != null && Objects.equals(getId(), progress.getId());
     }
 
     @Override
