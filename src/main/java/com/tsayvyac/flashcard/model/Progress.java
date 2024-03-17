@@ -3,6 +3,8 @@ package com.tsayvyac.flashcard.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Date;
@@ -30,7 +32,6 @@ public class Progress {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @MapsId
     @JoinColumn(name = "flashcard_id")
-    @JsonBackReference
     private Flashcard flashcard;
 
     @Override

@@ -1,6 +1,5 @@
 package com.tsayvyac.flashcard.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
@@ -26,9 +25,12 @@ public class Flashcard {
     @Column(nullable = false)
     private String back;
 
+    @ManyToOne
+    @JoinColumn(name = "set_id", nullable = false)
+    private CardSet cardSet;
+
     @OneToOne(mappedBy = "flashcard", cascade = CascadeType.ALL, orphanRemoval = true)
     @PrimaryKeyJoinColumn
-    @JsonManagedReference
     private Progress progress;
 
     @Override

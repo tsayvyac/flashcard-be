@@ -1,21 +1,18 @@
 package com.tsayvyac.flashcard.service.impl;
 
-import com.tsayvyac.flashcard.dto.FlashcardModelDto;
-import com.tsayvyac.flashcard.dto.FlashcardRequestDto;
-import com.tsayvyac.flashcard.exception.CardSetNotFound;
-import com.tsayvyac.flashcard.exception.FlashcardNotFound;
+import com.tsayvyac.flashcard.dto.FlashcardDto;
+import com.tsayvyac.flashcard.exception.NotFoundException;
 import com.tsayvyac.flashcard.model.CardSet;
 import com.tsayvyac.flashcard.model.Flashcard;
 import com.tsayvyac.flashcard.model.Progress;
 import com.tsayvyac.flashcard.repository.CardSetRepository;
 import com.tsayvyac.flashcard.repository.FlashcardRepository;
-import com.tsayvyac.flashcard.repository.ProgressRepository;
 import com.tsayvyac.flashcard.service.FlashcardService;
-import com.tsayvyac.flashcard.util.Mapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.Date;
 
 @Slf4j
@@ -24,45 +21,42 @@ import java.util.Date;
 class StdFlashcardStdService implements FlashcardService {
     private final FlashcardRepository flashcardRepository;
     private final CardSetRepository cardSetRepository;
-    private final ProgressRepository progressRepository;
 
     @Override
-    public FlashcardModelDto createFlashcard(FlashcardRequestDto dto) {
-        Flashcard flashcard = flashcardRepository.save(Flashcard.builder()
+    public FlashcardDto createFlashcard(FlashcardDto dto) {
+        CardSet cardSet = cardSetRepository.findById(dto.cardSetId())
+                .orElseThrow(() -> new NotFoundException("Card set with id " + dto.cardSetId() + " not found!"));
+        Flashcard flashcard = Flashcard.builder()
+                .id(dto.id())
                 .front(dto.front())
                 .back(dto.back())
-                .build()
-        );
-
+                .cardSet(cardSet)
+                .build();
         Progress progress = Progress.builder()
                 .repetitions(0)
-                .nextDate(new Date(Long.MIN_VALUE))
+                .nextDate(new Date(0))
                 .flashcard(flashcard)
                 .build();
-        progressRepository.save(progress);
+        flashcard.setProgress(progress);
 
-        CardSet cardSet = cardSetRepository.findById(dto.cardSetId())
-                .orElseThrow(() -> new CardSetNotFound("Card set with id " + dto.cardSetId() + " not found!"));
-        cardSet.getFlashcards().add(flashcard);
-        cardSetRepository.save(cardSet);
-
-        return Mapper.flashcardToDto(flashcard);
+        flashcardRepository.save(flashcard);
+        return new FlashcardDto(flashcard.getId(), flashcard.getFront(), flashcard.getBack(), cardSet.getId());
     }
 
     @Override
-    public FlashcardModelDto getFlashcard(Long id) {
-        return Mapper.flashcardToDto(getFlashcardById(id));
+    public FlashcardDto getFlashcardById(Long id) {
+        Flashcard flashcard = getById(id);
+
+        return new FlashcardDto(flashcard.getId(), flashcard.getFront(), flashcard.getBack(), flashcard.getCardSet().getId());
     }
 
     @Override
     public void deleteFlashcard(Long id) {
-        Flashcard flashcard = getFlashcardById(id);
-        flashcardRepository.delete(flashcard);
+        flashcardRepository.delete(getById(id));
     }
 
-    private Flashcard getFlashcardById(Long id) {
+    private Flashcard getById(Long id) {
         return flashcardRepository.findById(id)
-                .orElseThrow(() -> new FlashcardNotFound("Flashcard with id " + id + " not found!"));
+                .orElseThrow(() -> new NotFoundException("Flashcard with id " + id + " not found!"));
     }
-
 }

@@ -9,5 +9,4 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 class StdLearnerStdService implements LearnerService {
-
 }

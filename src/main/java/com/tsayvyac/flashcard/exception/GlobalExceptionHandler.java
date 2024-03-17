@@ -13,22 +13,13 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(value = CardSetNotFound.class)
-    public ResponseEntity<Object> handleCardSetNotFound(CardSetNotFound ex) {
-        log.error("Card set not found", ex);
-        return new ResponseEntity<>(getStdBody(ex), HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(value = FlashcardNotFound.class)
-    public ResponseEntity<Object> handleFlashcardNotFound(FlashcardNotFound ex) {
-        log.error("Flashcard not found", ex);
-        return new ResponseEntity<>(getStdBody(ex), HttpStatus.NOT_FOUND);
-    }
-
-    private Map<String, Object> getStdBody(RuntimeException ex) {
+    @ExceptionHandler(value = NotFoundException.class)
+    public ResponseEntity<Object> handleCardSetNotFound(NotFoundException ex) {
+        log.error("Not found exception", ex);
         Map<String, Object> body = new HashMap<>();
         body.put("message", ex.getMessage());
 
-        return body;
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
+
 }
