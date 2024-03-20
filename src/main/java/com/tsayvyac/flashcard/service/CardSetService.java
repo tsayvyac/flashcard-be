@@ -1,7 +1,7 @@
 package com.tsayvyac.flashcard.service;
 
-import com.tsayvyac.flashcard.dto.FlashcardDto;
 import com.tsayvyac.flashcard.dto.CardSetDto;
+import com.tsayvyac.flashcard.dto.FlashcardDto;
 import com.tsayvyac.flashcard.dto.PageDto;
 
 public interface CardSetService {

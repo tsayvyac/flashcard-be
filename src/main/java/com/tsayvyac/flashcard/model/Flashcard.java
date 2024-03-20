@@ -2,6 +2,8 @@ package com.tsayvyac.flashcard.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
@@ -27,6 +29,7 @@ public class Flashcard {
 
     @ManyToOne
     @JoinColumn(name = "set_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private CardSet cardSet;
 
     @OneToOne(mappedBy = "flashcard", cascade = CascadeType.ALL, orphanRemoval = true)

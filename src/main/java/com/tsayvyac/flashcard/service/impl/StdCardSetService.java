@@ -15,10 +15,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.tsayvyac.flashcard.util.Constant.Str.NOT_FOUND;
 
 @Slf4j
 @Service
@@ -29,64 +30,40 @@ class StdCardSetService implements CardSetService {
 
     @Override
     public CardSetDto createCardSet(CardSetDto dto) {
-        CardSet cardSet = cardSetRepository.save(CardSet.builder()
-                .id(dto.id())
-                .name(dto.name())
-                .build()
-        );
+        CardSet cardSet = cardSetRepository.save(Mapper.dtoToCardSet(dto));
 
         return new CardSetDto(cardSet.getId(), cardSet.getName());
     }
 
     @Override
     public PageDto<CardSetDto> getCardSets(int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<CardSet> cardSets = cardSetRepository.findAll(pageable);
-        List<CardSet> listOfCardSets = cardSets.getContent();
-        List<CardSetDto> listOfDto = listOfCardSets.stream().map(Mapper::cardSetToDto).toList();
+        Page<CardSet> cardSets = cardSetRepository.findAll(PageRequest.of(pageNo, pageSize));
+        List<CardSetDto> listOfDto = cardSets.getContent().stream().map(Mapper::cardSetToDto).toList();
 
-        return new PageDto<>(
-                listOfDto,
-                pageNo,
-                pageSize,
-                cardSets.getTotalElements(),
-                cardSets.getTotalPages(),
-                cardSets.isLast()
-        );
+        return Mapper.mapToPageDto(listOfDto, pageNo, pageSize, cardSets);
     }
 
     @Override
     public CardSetDto getCardSetById(Long id) {
         CardSet cardSet = getById(id);
 
-        return new CardSetDto(cardSet.getId(), cardSet.getName());
+        return Mapper.cardSetToDto(cardSet);
     }
 
     // TODO: Resolve N+1 problem
     @Override
     public PageDto<FlashcardDto> getFlashcardsInSet(Long id, int pageNo, int pageSize) {
         CardSet cardSet = cardSetRepository.getReferenceById(id);
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Flashcard> flashcards = flashcardRepository.findAllByCardSet(cardSet, pageable);
-        List<Flashcard> listOfFlashcards = flashcards.getContent();
-        List<FlashcardDto> listOfDto = listOfFlashcards.stream().map(f -> Mapper.flashcardToDto(f, id)).toList();
+        Page<Flashcard> flashcards = flashcardRepository.findAllByCardSet(cardSet, PageRequest.of(pageNo, pageSize));
+        List<FlashcardDto> listOfDto = flashcards.getContent().stream().map(f -> Mapper.flashcardToDto(f, id)).toList();
 
-        return new PageDto<>(
-                listOfDto,
-                pageNo,
-                pageSize,
-                flashcards.getTotalElements(),
-                flashcards.getTotalPages(),
-                flashcards.isLast()
-        );
+        return Mapper.mapToPageDto(listOfDto, pageNo, pageSize, flashcards);
     }
 
     @Override
     public CardSetDto updateCardSet(Long id, CardSetDto dto) {
         CardSet existing = getById(id);
-        CardSet incomplete = CardSet.builder()
-                .name(dto.name())
-                .build();
+        CardSet incomplete = Mapper.dtoToCardSet(dto);
         try {
             Patcher.patchUpdate(existing, incomplete);
             cardSetRepository.save(existing);
@@ -94,7 +71,7 @@ class StdCardSetService implements CardSetService {
             log.error(ex.getMessage());
         }
 
-        return new CardSetDto(existing.getId(), existing.getName());
+        return Mapper.cardSetToDto(existing);
     }
 
     @Override
@@ -104,6 +81,6 @@ class StdCardSetService implements CardSetService {
 
     private CardSet getById(Long id) {
         return cardSetRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Card set with id " + id + " not found!"));
+                .orElseThrow(() -> new NotFoundException("Card set with id " + id + NOT_FOUND));
     }
 }

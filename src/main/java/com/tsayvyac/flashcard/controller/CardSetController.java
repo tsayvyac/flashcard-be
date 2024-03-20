@@ -1,8 +1,7 @@
 package com.tsayvyac.flashcard.controller;
 
-import com.tsayvyac.flashcard.controller.request.CardSetRequest;
-import com.tsayvyac.flashcard.dto.FlashcardDto;
 import com.tsayvyac.flashcard.dto.CardSetDto;
+import com.tsayvyac.flashcard.dto.FlashcardDto;
 import com.tsayvyac.flashcard.dto.PageDto;
 import com.tsayvyac.flashcard.service.CardSetService;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +19,7 @@ public class CardSetController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public CardSetDto createCardSet(@RequestBody CardSetRequest request) {
-        CardSetDto dto = new CardSetDto(null, request.name());
+    public CardSetDto createCardSet(@RequestBody CardSetDto dto) {
         return cardSetService.createCardSet(dto);
     }
 
@@ -52,8 +50,7 @@ public class CardSetController {
 
     @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public CardSetDto updateCardSet(@PathVariable Long id, @RequestBody CardSetRequest request) {
-        CardSetDto dto = new CardSetDto(null, request.name());
+    public CardSetDto updateCardSet(@PathVariable Long id, @RequestBody CardSetDto dto) {
         return cardSetService.updateCardSet(id, dto);
     }
 

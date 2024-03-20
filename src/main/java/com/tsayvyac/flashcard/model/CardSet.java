@@ -23,12 +23,12 @@ public class CardSet {
     @Column(nullable = false)
     private String name;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
+//    @ManyToOne
 //    @JoinColumn(name = "learner_id", nullable = false)
 //    @ToString.Exclude
 //    private Learner learner;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Flashcard> flashcards;
 
     @Override

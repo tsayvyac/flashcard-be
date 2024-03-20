@@ -8,7 +8,6 @@ public record ProgressDto(
         Long id,
         Integer repetitions,
         @JsonFormat(pattern = "yyyy-MM-dd")
-        Date nextDate,
-        Long flashcardId
+        Date nextDate
 ) {
 }
