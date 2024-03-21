@@ -1,0 +1,21 @@
+server:
+  servlet:
+    context-path: /api/v1
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/flashcard
+    username: postgres
+    password: postgres
+#    tomcat:
+#      test-while-idle: true                  Keep the connection alive if idle for a long time (needed for production)
+#      validation-query: SELECT 1                                                     Send this query for staying alive
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect

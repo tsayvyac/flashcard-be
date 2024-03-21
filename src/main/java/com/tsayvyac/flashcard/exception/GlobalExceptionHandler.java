@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j(topic = "EXCEPTION_HANDLER")
 @ControllerAdvice
-@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = NotFoundException.class)

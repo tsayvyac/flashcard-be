@@ -28,7 +28,7 @@ public class CardSet {
 //    @ToString.Exclude
 //    private Learner learner;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cardSet", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Flashcard> flashcards;
 
     @Override

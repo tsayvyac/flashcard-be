@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/sets")
 @RequiredArgsConstructor
-@Slf4j
 public class CardSetController {
     private final CardSetService cardSetService;
 
@@ -54,7 +53,7 @@ public class CardSetController {
         return cardSetService.updateCardSet(id, dto);
     }
 
-    @DeleteMapping(value = "{id}")
+    @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteCardSet(@PathVariable Long id) {
         cardSetService.deleteCardSet(id);

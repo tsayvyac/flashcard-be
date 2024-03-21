@@ -21,7 +21,7 @@ import java.util.List;
 
 import static com.tsayvyac.flashcard.util.Constant.Str.NOT_FOUND;
 
-@Slf4j
+@Slf4j(topic = "CARD_SET_SERVICE")
 @Service
 @RequiredArgsConstructor
 class StdCardSetService implements CardSetService {
@@ -31,6 +31,7 @@ class StdCardSetService implements CardSetService {
     @Override
     public CardSetDto createCardSet(CardSetDto dto) {
         CardSet cardSet = cardSetRepository.save(Mapper.dtoToCardSet(dto));
+        log.info("Card set with id {} was saved successfully!", cardSet.getId());
 
         return new CardSetDto(cardSet.getId(), cardSet.getName());
     }
@@ -50,7 +51,6 @@ class StdCardSetService implements CardSetService {
         return Mapper.cardSetToDto(cardSet);
     }
 
-    // TODO: Resolve N+1 problem
     @Override
     public PageDto<FlashcardDto> getFlashcardsInSet(Long id, int pageNo, int pageSize) {
         CardSet cardSet = cardSetRepository.getReferenceById(id);
@@ -70,6 +70,7 @@ class StdCardSetService implements CardSetService {
         } catch (IllegalAccessException ex) {
             log.error(ex.getMessage());
         }
+        log.info("Card set with id {} was updated!", id);
 
         return Mapper.cardSetToDto(existing);
     }
@@ -77,6 +78,7 @@ class StdCardSetService implements CardSetService {
     @Override
     public void deleteCardSet(Long id) {
         cardSetRepository.delete(getById(id));
+        log.info("Card set with id {} was deleted!", id);
     }
 
     private CardSet getById(Long id) {

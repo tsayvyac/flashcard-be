@@ -15,7 +15,7 @@ import java.util.Objects;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = "flashcard")
 public class Progress {
     @Id
     @Column(name = "flashcard_id")
@@ -28,7 +28,7 @@ public class Progress {
     @Temporal(TemporalType.DATE)
     private Date nextDate;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "flashcard_id")
     @OnDelete(action = OnDeleteAction.CASCADE)

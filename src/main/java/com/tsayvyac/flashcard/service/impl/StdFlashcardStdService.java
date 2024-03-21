@@ -20,7 +20,7 @@ import java.util.Date;
 
 import static com.tsayvyac.flashcard.util.Constant.Str.NOT_FOUND;
 
-@Slf4j
+@Slf4j(topic = "FLASHCARD_SERVICE")
 @Service
 @RequiredArgsConstructor
 class StdFlashcardStdService implements FlashcardService {
@@ -39,8 +39,9 @@ class StdFlashcardStdService implements FlashcardService {
                 .build();
         flashcard.setProgress(progress);
 
-        flashcardRepository.save(flashcard);
-        return Mapper.flashcardToDto(flashcard, cardSet.getId());
+        Flashcard saved = flashcardRepository.save(flashcard);
+        log.info("Flashcard with id {} was saved successfully!", saved.getId());
+        return Mapper.flashcardToDto(saved, cardSet.getId());
     }
 
     @Override
@@ -50,7 +51,6 @@ class StdFlashcardStdService implements FlashcardService {
         return Mapper.flashcardToDto(flashcard, flashcard.getCardSet().getId());
     }
 
-    // TODO: Logic if flashcard is moved to another card set
     @Override
     public FlashcardDto updateFlashcard(Long id, FlashcardDto dto) {
         CardSet cardSet = getCardSetById(dto.cardSetId());
@@ -62,6 +62,7 @@ class StdFlashcardStdService implements FlashcardService {
         } catch (IllegalAccessException ex) {
             log.error(ex.getMessage());
         }
+        log.info("Flashcard with id {} was updated!", id);
 
         return Mapper.flashcardToDto(existing, existing.getCardSet().getId());
     }
@@ -69,6 +70,7 @@ class StdFlashcardStdService implements FlashcardService {
     @Override
     public void deleteFlashcard(Long id) {
         flashcardRepository.delete(getById(id));
+        log.info("Flashcard with id {} was deleted!", id);
     }
 
     @Override
