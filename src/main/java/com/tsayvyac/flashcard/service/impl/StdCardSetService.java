@@ -85,4 +85,12 @@ class StdCardSetService implements CardSetService {
         return cardSetRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Card set with id " + id + NOT_FOUND));
     }
+
+    @Override
+    public List<FlashcardDto> getRepetitionFlashcards(Long id) {
+        CardSet cardSet = cardSetRepository.getReferenceById(id);
+        List<Flashcard> flashcards = flashcardRepository.findFlashcardsForRepetition(cardSet);
+
+        return flashcards.stream().map(f -> Mapper.flashcardToDto(f, id)).toList();
+    }
 }

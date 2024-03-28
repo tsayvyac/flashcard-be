@@ -2,6 +2,12 @@ server:
   servlet:
     context-path: /api/v1
 
+app:
+  async:
+    core-pool-size: 2
+    max-pool-size: 4
+    queue-capacity: 40
+
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver

@@ -5,10 +5,11 @@ import com.tsayvyac.flashcard.dto.FlashcardDto;
 import com.tsayvyac.flashcard.dto.PageDto;
 import com.tsayvyac.flashcard.service.CardSetService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/sets")
@@ -45,6 +46,12 @@ public class CardSetController {
             @RequestParam(value = "size", defaultValue = "10", required = false) int pageSize
     ) {
         return cardSetService.getFlashcardsInSet(id, pageNo, pageSize);
+    }
+
+    @GetMapping(value = "/{id}/repetition")
+    @ResponseStatus(HttpStatus.OK)
+    public List<FlashcardDto> getRepetitionFlashcards(@PathVariable Long id) {
+        return cardSetService.getRepetitionFlashcards(id);
     }
 
     @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

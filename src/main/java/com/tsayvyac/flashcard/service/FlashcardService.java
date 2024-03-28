@@ -9,5 +9,5 @@ public interface FlashcardService {
     FlashcardDto updateFlashcard(Long id, FlashcardDto dto);
     void deleteFlashcard(Long id);
     ProgressDto getProgress(Long id);
-    ProgressDto updateProgress(Long id, ProgressDto dto);
+    void updateProgress(Long id, int score);
 }

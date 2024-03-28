@@ -1,5 +1,6 @@
 package com.tsayvyac.flashcard.controller;
 
+import com.tsayvyac.flashcard.controller.request.ProgressRequest;
 import com.tsayvyac.flashcard.dto.FlashcardDto;
 import com.tsayvyac.flashcard.dto.ProgressDto;
 import com.tsayvyac.flashcard.service.FlashcardService;
@@ -46,7 +47,7 @@ public class FlashcardController {
 
     @PatchMapping(value = "/{id}/progress", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ProgressDto updateFlashcardProgress(@PathVariable Long id, @RequestBody ProgressDto dto) {
-        return flashcardService.updateProgress(id, dto);
+    public void updateFlashcardProgress(@PathVariable Long id, @RequestBody ProgressRequest request) {
+        flashcardService.updateProgress(id, request.score());
     }
 }

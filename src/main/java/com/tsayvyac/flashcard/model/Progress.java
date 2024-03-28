@@ -25,6 +25,9 @@ public class Progress {
     private Integer repetitions;
 
     @Column(nullable = false)
+    private Integer streak;
+
+    @Column(nullable = false)
     @Temporal(TemporalType.DATE)
     private Date nextDate;
 

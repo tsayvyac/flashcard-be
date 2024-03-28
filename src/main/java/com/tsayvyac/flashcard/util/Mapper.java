@@ -62,6 +62,7 @@ public class Mapper {
         return new ProgressDto(
                 progress.getId(),
                 progress.getRepetitions(),
+                progress.getStreak(),
                 progress.getNextDate()
         );
     }
