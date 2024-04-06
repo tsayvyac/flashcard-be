@@ -38,7 +38,8 @@ public class Mapper {
                 flashcard.getId(),
                 flashcard.getFront(),
                 flashcard.getBack(),
-                cardSetId
+                cardSetId,
+                flashcard.getProgress().getNextDate()
         );
     }
 
@@ -65,13 +66,5 @@ public class Mapper {
                 progress.getStreak(),
                 progress.getNextDate()
         );
-    }
-
-    public static Progress dtoToProgress(ProgressDto dto) {
-        return Progress.builder()
-                .id(dto.id())
-                .repetitions(dto.repetitions())
-                .nextDate(dto.nextDate())
-                .build();
     }
 }

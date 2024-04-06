@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -52,6 +54,7 @@ class StdCardSetService implements CardSetService {
     }
 
     @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     public PageDto<FlashcardDto> getFlashcardsInSet(Long id, int pageNo, int pageSize) {
         CardSet cardSet = cardSetRepository.getReferenceById(id);
         Page<Flashcard> flashcards = flashcardRepository.findAllByCardSet(cardSet, PageRequest.of(pageNo, pageSize));
@@ -61,6 +64,16 @@ class StdCardSetService implements CardSetService {
     }
 
     @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
+    public List<FlashcardDto> getRepetitionFlashcards(Long id) {
+        CardSet cardSet = cardSetRepository.getReferenceById(id);
+        List<Flashcard> flashcards = flashcardRepository.findFlashcardsForRepetition(cardSet);
+
+        return flashcards.stream().map(f -> Mapper.flashcardToDto(f, id)).toList();
+    }
+
+    @Override
+    @Transactional
     public CardSetDto updateCardSet(Long id, CardSetDto dto) {
         CardSet existing = getById(id);
         CardSet incomplete = Mapper.dtoToCardSet(dto);
@@ -84,13 +97,5 @@ class StdCardSetService implements CardSetService {
     private CardSet getById(Long id) {
         return cardSetRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Card set with id " + id + NOT_FOUND));
-    }
-
-    @Override
-    public List<FlashcardDto> getRepetitionFlashcards(Long id) {
-        CardSet cardSet = cardSetRepository.getReferenceById(id);
-        List<Flashcard> flashcards = flashcardRepository.findFlashcardsForRepetition(cardSet);
-
-        return flashcards.stream().map(f -> Mapper.flashcardToDto(f, id)).toList();
     }
 }

@@ -45,7 +45,7 @@ public class FlashcardController {
         return flashcardService.getProgress(id);
     }
 
-    @PatchMapping(value = "/{id}/progress", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}/progress", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public void updateFlashcardProgress(@PathVariable Long id, @RequestBody ProgressRequest request) {
         flashcardService.updateProgress(id, request.score());

@@ -1,5 +1,6 @@
 package com.tsayvyac.flashcard.service.impl.strategy;
 
+import com.tsayvyac.flashcard.exception.UnsupportedScoreException;
 import com.tsayvyac.flashcard.model.Progress;
 
 public class ContextStrategy {
@@ -14,5 +15,6 @@ public class ContextStrategy {
         if (score == -1) strategy = new BadScoreStrategy();
         else if (score == 0) strategy = new MidScoreStrategy();
         else if (score == 1) strategy = new GoodScoreStrategy();
+        else throw new UnsupportedScoreException("Unsupported score with value: " + score + "! Use only supported scores.");
     }
 }
