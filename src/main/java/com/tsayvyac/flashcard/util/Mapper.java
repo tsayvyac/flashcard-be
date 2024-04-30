@@ -1,9 +1,6 @@
 package com.tsayvyac.flashcard.util;
 
-import com.tsayvyac.flashcard.dto.CardSetDto;
-import com.tsayvyac.flashcard.dto.FlashcardDto;
-import com.tsayvyac.flashcard.dto.PageDto;
-import com.tsayvyac.flashcard.dto.ProgressDto;
+import com.tsayvyac.flashcard.dto.*;
 import com.tsayvyac.flashcard.model.CardSet;
 import com.tsayvyac.flashcard.model.Flashcard;
 import com.tsayvyac.flashcard.model.Progress;
@@ -26,10 +23,12 @@ public class Mapper {
         );
     }
 
-    public static CardSetDto cardSetToDto(CardSet cardSet) {
+    public static CardSetDto cardSetToDto(CardSet cardSet, Integer countRep, Integer countAll) {
         return new CardSetDto(
                 cardSet.getId(),
-                cardSet.getName()
+                cardSet.getName(),
+                countRep,
+                countAll
         );
     }
 
@@ -65,6 +64,13 @@ public class Mapper {
                 progress.getRepetitions(),
                 progress.getStreak(),
                 progress.getNextDate()
+        );
+    }
+
+    public static SetsInfoDto cardSetToSetsInfo(CardSet cardSet) {
+        return new SetsInfoDto(
+                cardSet.getId(),
+                cardSet.getName()
         );
     }
 }
