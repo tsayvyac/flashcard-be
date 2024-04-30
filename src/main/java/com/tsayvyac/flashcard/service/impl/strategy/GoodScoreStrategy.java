@@ -2,8 +2,7 @@ package com.tsayvyac.flashcard.service.impl.strategy;
 
 import com.tsayvyac.flashcard.model.Progress;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
 
 import static com.tsayvyac.flashcard.util.Constant.*;
 
@@ -13,11 +12,7 @@ public class GoodScoreStrategy implements ComputeProgressStrategy {
     public Progress computeDate(Progress existing) {
         int daysToAdd = (int) (Math.max(1, AFTER_DAYS * existing.getStreak() * REPETITION_COEFFICIENT));
         if (daysToAdd > MAX_DAYS) daysToAdd = MAX_DAYS;
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.add(Calendar.DATE, daysToAdd);
-        Date nextD = calendar.getTime();
+        LocalDate nextD = LocalDate.now().plusDays(daysToAdd);
 
         return Progress.builder()
                 .repetitions(existing.getRepetitions() + 1)

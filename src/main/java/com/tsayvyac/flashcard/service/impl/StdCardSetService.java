@@ -3,6 +3,7 @@ package com.tsayvyac.flashcard.service.impl;
 import com.tsayvyac.flashcard.dto.CardSetDto;
 import com.tsayvyac.flashcard.dto.FlashcardDto;
 import com.tsayvyac.flashcard.dto.PageDto;
+import com.tsayvyac.flashcard.dto.SetsInfoDto;
 import com.tsayvyac.flashcard.exception.NotFoundException;
 import com.tsayvyac.flashcard.model.CardSet;
 import com.tsayvyac.flashcard.model.Flashcard;
@@ -10,6 +11,7 @@ import com.tsayvyac.flashcard.repository.CardSetRepository;
 import com.tsayvyac.flashcard.repository.FlashcardRepository;
 import com.tsayvyac.flashcard.service.CardSetService;
 import com.tsayvyac.flashcard.util.Mapper;
+import com.tsayvyac.flashcard.util.Pair;
 import com.tsayvyac.flashcard.util.Patcher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.tsayvyac.flashcard.util.Constant.Str.NOT_FOUND;
 
@@ -35,29 +39,44 @@ class StdCardSetService implements CardSetService {
         CardSet cardSet = cardSetRepository.save(Mapper.dtoToCardSet(dto));
         log.info("Card set with id {} was saved successfully!", cardSet.getId());
 
-        return new CardSetDto(cardSet.getId(), cardSet.getName());
+        return new CardSetDto(cardSet.getId(), cardSet.getName(), 0, 0);
     }
 
     @Override
-    public PageDto<CardSetDto> getCardSets(int pageNo, int pageSize) {
+    public PageDto<CardSetDto> getCardSets(int pageNo, int pageSize, boolean isOnlyRep) {
         Page<CardSet> cardSets = cardSetRepository.findAll(PageRequest.of(pageNo, pageSize));
-        List<CardSetDto> listOfDto = cardSets.getContent().stream().map(Mapper::cardSetToDto).toList();
+        Predicate<CardSetDto> predicate = isOnlyRep
+                ? i -> i.countRep() > 0
+                : i -> true;
+        return convertPageToPageDto(
+                cardSets,
+                predicate,
+                pageNo,
+                pageSize
+        );
+    }
 
-        return Mapper.mapToPageDto(listOfDto, pageNo, pageSize, cardSets);
+    @Override
+    public List<SetsInfoDto> getSetsInfo() {
+        List<CardSet> cardSetList = cardSetRepository.findAll();
+        return cardSetList.stream()
+                .map(Mapper::cardSetToSetsInfo)
+                .toList();
     }
 
     @Override
     public CardSetDto getCardSetById(Long id) {
         CardSet cardSet = getById(id);
+        Pair<Integer, Integer> pair = getCounts(cardSet);
 
-        return Mapper.cardSetToDto(cardSet);
+        return Mapper.cardSetToDto(cardSet, pair.getFirst(), pair.getSecond());
     }
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     public PageDto<FlashcardDto> getFlashcardsInSet(Long id, int pageNo, int pageSize) {
         CardSet cardSet = cardSetRepository.getReferenceById(id);
-        Page<Flashcard> flashcards = flashcardRepository.findAllByCardSet(cardSet, PageRequest.of(pageNo, pageSize));
+        Page<Flashcard> flashcards = flashcardRepository.findAllPagesByCardSet(cardSet, PageRequest.of(pageNo, pageSize));
         List<FlashcardDto> listOfDto = flashcards.getContent().stream().map(f -> Mapper.flashcardToDto(f, id)).toList();
 
         return Mapper.mapToPageDto(listOfDto, pageNo, pageSize, flashcards);
@@ -65,9 +84,11 @@ class StdCardSetService implements CardSetService {
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
-    public List<FlashcardDto> getRepetitionFlashcards(Long id) {
+    public List<FlashcardDto> getFlashcardsFromSet(Long id, boolean isCram) {
         CardSet cardSet = cardSetRepository.getReferenceById(id);
-        List<Flashcard> flashcards = flashcardRepository.findFlashcardsForRepetition(cardSet);
+        List<Flashcard> flashcards = isCram
+                ? flashcardRepository.findAllByCardSet(cardSet)
+                : flashcardRepository.findFlashcardsForRepetition(cardSet);
 
         return flashcards.stream().map(f -> Mapper.flashcardToDto(f, id)).toList();
     }
@@ -85,7 +106,8 @@ class StdCardSetService implements CardSetService {
         }
         log.info("Card set with id {} was updated!", id);
 
-        return Mapper.cardSetToDto(existing);
+        Pair<Integer, Integer> pair = getCounts(existing);
+        return Mapper.cardSetToDto(existing, pair.getFirst(), pair.getSecond());
     }
 
     @Override
@@ -97,5 +119,30 @@ class StdCardSetService implements CardSetService {
     private CardSet getById(Long id) {
         return cardSetRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Card set with id " + id + NOT_FOUND));
+    }
+
+    private Pair<Integer, Integer> getCounts(CardSet cardSet) {
+        Integer countRep = flashcardRepository.countFlashcardsForRepetition(cardSet);
+        Integer countAll = flashcardRepository.countFlashcardByCardSet(cardSet);
+        return Pair.of(countRep, countAll);
+    }
+
+    private PageDto<CardSetDto> convertPageToPageDto(
+            Page<CardSet> cardSets,
+            Predicate<CardSetDto> predicate,
+            int pageNo,
+            int pageSize
+    ) {
+        List<CardSetDto> listOfDto = cardSets.getContent().stream()
+                .map(cardSet -> {
+                            Pair<Integer, Integer> pair = getCounts(cardSet);
+                            return Mapper.cardSetToDto(cardSet, pair.getFirst(), pair.getSecond());
+                        }
+                )
+                .filter(predicate)
+                .sorted(Comparator.comparing(CardSetDto::countRep).reversed())
+                .toList();
+
+        return Mapper.mapToPageDto(listOfDto, pageNo, pageSize, cardSets);
     }
 }

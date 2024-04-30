@@ -17,7 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.Month;
 
 import static com.tsayvyac.flashcard.util.Constant.Str.NOT_FOUND;
 
@@ -38,7 +39,7 @@ class StdFlashcardStdService implements FlashcardService {
         Progress progress = Progress.builder()
                 .repetitions(0)
                 .streak(0)
-                .nextDate(new Date(0))
+                .nextDate(LocalDate.of(2001, Month.MAY, 23))
                 .flashcard(flashcard)
                 .build();
         flashcard.setProgress(progress);

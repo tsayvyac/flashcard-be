@@ -6,7 +6,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -29,7 +29,7 @@ public class Progress {
 
     @Column(nullable = false)
     @Temporal(TemporalType.DATE)
-    private Date nextDate;
+    private LocalDate nextDate;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @MapsId

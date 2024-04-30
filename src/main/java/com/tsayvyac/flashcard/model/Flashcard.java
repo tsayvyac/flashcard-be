@@ -21,9 +21,11 @@ public class Flashcard {
     @SequenceGenerator(name = "flashcard_seq_gen", sequenceName = "flashcard_seq", allocationSize = 1)
     private Long id;
 
+    @Lob
     @Column(nullable = false)
     private String front;
 
+    @Lob
     @Column(nullable = false)
     private String back;
 

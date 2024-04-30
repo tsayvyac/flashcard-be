@@ -2,7 +2,7 @@ package com.tsayvyac.flashcard.service.impl.strategy;
 
 import com.tsayvyac.flashcard.model.Progress;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class BadScoreStrategy implements ComputeProgressStrategy {
 
@@ -11,7 +11,7 @@ public class BadScoreStrategy implements ComputeProgressStrategy {
         return Progress.builder()
                 .repetitions(existing.getRepetitions() + 1)
                 .streak(0)
-                .nextDate(new Date())
+                .nextDate(LocalDate.now())
                 .build();
     }
 }
