@@ -1,10 +1,10 @@
 package com.tsayvyac.flashcard.util;
 
+import com.tsayvyac.flashcard.controller.request.RegisterRequest;
 import com.tsayvyac.flashcard.dto.*;
-import com.tsayvyac.flashcard.model.CardSet;
-import com.tsayvyac.flashcard.model.Flashcard;
-import com.tsayvyac.flashcard.model.Progress;
+import com.tsayvyac.flashcard.model.*;
 import org.springframework.data.domain.Page;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
@@ -42,10 +42,11 @@ public class Mapper {
         );
     }
 
-    public static CardSet dtoToCardSet(CardSetDto dto) {
+    public static CardSet dtoToCardSet(CardSetDto dto, Learner learner) {
         return CardSet.builder()
                 .id(dto.id())
                 .name(dto.name())
+                .learner(learner)
                 .build();
     }
 
@@ -67,10 +68,20 @@ public class Mapper {
         );
     }
 
-    public static SetsInfoDto cardSetToSetsInfo(CardSet cardSet) {
-        return new SetsInfoDto(
-                cardSet.getId(),
-                cardSet.getName()
+    public static LearnerDto learnerToDto(Learner learner) {
+        return new LearnerDto(
+                learner.getUid(),
+                learner.getUsername(),
+                learner.getEmail()
         );
+    }
+
+    public static Learner requestToLearner(RegisterRequest request, PasswordEncoder encoder) {
+        return Learner.builder()
+                .username(request.username())
+                .email(request.email())
+                .password(encoder.encode(request.password()))
+                .role(Role.ROLE_USER)
+                .build();
     }
 }

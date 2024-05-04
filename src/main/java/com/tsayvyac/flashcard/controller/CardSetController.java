@@ -3,8 +3,8 @@ package com.tsayvyac.flashcard.controller;
 import com.tsayvyac.flashcard.dto.CardSetDto;
 import com.tsayvyac.flashcard.dto.FlashcardDto;
 import com.tsayvyac.flashcard.dto.PageDto;
-import com.tsayvyac.flashcard.dto.SetsInfoDto;
 import com.tsayvyac.flashcard.service.CardSetService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin("http://localhost:3000")
 @RestController
 @RequestMapping("/sets")
 @RequiredArgsConstructor
@@ -21,7 +20,7 @@ public class CardSetController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public CardSetDto createCardSet(@RequestBody CardSetDto dto) {
+    public CardSetDto createCardSet(@RequestBody @Valid CardSetDto dto) {
         return cardSetService.createCardSet(dto);
     }
 
@@ -45,7 +44,7 @@ public class CardSetController {
 
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public List<SetsInfoDto> getSetsInfo() {
+    public List<CardSetDto> getSetsInfo() {
         return cardSetService.getSetsInfo();
     }
 
@@ -79,7 +78,7 @@ public class CardSetController {
 
     @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public CardSetDto updateCardSet(@PathVariable Long id, @RequestBody CardSetDto dto) {
+    public CardSetDto updateCardSet(@PathVariable Long id, @RequestBody @Valid CardSetDto dto) {
         return cardSetService.updateCardSet(id, dto);
     }
 

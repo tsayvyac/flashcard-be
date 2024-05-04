@@ -2,6 +2,7 @@ package com.tsayvyac.flashcard.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 public record ProgressDto(
@@ -10,5 +11,5 @@ public record ProgressDto(
         Integer streak,
         @JsonFormat(pattern = "yyyy-MM-dd")
         LocalDate nextDate
-) {
+) implements Serializable {
 }
