@@ -1,5 +1,6 @@
 package com.tsayvyac.flashcard.controller;
 
+import com.tsayvyac.flashcard.controller.response.StatsResponse;
 import com.tsayvyac.flashcard.dto.LearnerDto;
 import com.tsayvyac.flashcard.service.LearnerService;
 import lombok.RequiredArgsConstructor;
@@ -22,4 +23,9 @@ public class LearnerController {
         return learnerService.getLearnerInfo();
     }
 
+    @GetMapping(value = "/stats", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public StatsResponse getLearnerStats() {
+        return new StatsResponse(learnerService.getStats());
+    }
 }

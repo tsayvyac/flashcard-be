@@ -14,6 +14,7 @@ public class MidScoreStrategy implements ComputeProgressStrategy {
         return Progress.builder()
                 .repetitions(existing.getRepetitions() + 1)
                 .streak(newStreak)
+                .lastScore(0)
                 .nextDate(nextD)
                 .build();
     }

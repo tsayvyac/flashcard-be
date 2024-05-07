@@ -9,5 +9,6 @@ import java.util.Optional;
 @Repository
 public interface LearnerRepository extends JpaRepository<Learner, Long> {
     Optional<Learner> findByUsername(String username);
-    boolean existsByUsernameAndEmail(String username, String email);
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
 }

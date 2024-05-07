@@ -27,24 +27,30 @@ public class StdAuthService implements AuthService {
 
     @Override
     public AuthResponse register(RegisterRequest request) {
-        if (learnerRepository.existsByUsernameAndEmail(request.username(), request.email()))
-            throw new ValidationException("Learner with username " + request.username() + " or email " + request.email() + " already exist!");
+        if (learnerRepository.existsByUsername(request.username()))
+            throw new ValidationException("Learner with username " + request.username() + " already exist!");
+        if (learnerRepository.existsByEmail(request.email()))
+            throw new ValidationException("Learner with email " + request.email() + " already exist!");
         Learner learner = Mapper.requestToLearner(request, passwordEncoder);
         learnerRepository.save(learner);
         String token = jwtService.generateToken(learner);
-        return new AuthResponse(token);
+        log.info("Learner with username {} was successfully registered", learner.getUsername());
+        return Mapper.authRequestToResponse(token, learner);
     }
 
     @Override
     public AuthResponse authenticate(AuthRequest request) {
+        Learner learner = learnerRepository.findByUsername(request.username()).orElseThrow(() ->
+                new ValidationException("Username does not exist"));
+
         authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.username(),
                         request.password()
                 )
         );
-        Learner learner = learnerRepository.findByUsername(request.username()).orElseThrow();
         String token = jwtService.generateToken(learner);
-        return new AuthResponse(token);
+        log.info("Learner with username {} was successfully authenticated", learner.getUsername());
+        return Mapper.authRequestToResponse(token, learner);
     }
 }

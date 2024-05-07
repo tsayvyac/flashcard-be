@@ -11,6 +11,7 @@ public class BadScoreStrategy implements ComputeProgressStrategy {
         return Progress.builder()
                 .repetitions(existing.getRepetitions() + 1)
                 .streak(0)
+                .lastScore(-1)
                 .nextDate(LocalDate.now())
                 .build();
     }

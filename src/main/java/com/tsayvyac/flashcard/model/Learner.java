@@ -44,6 +44,10 @@ public class Learner implements Serializable, UserDetails {
     @ToString.Exclude
     private Set<CardSet> cardSets;
 
+    @OneToMany(mappedBy = "learner", fetch = FetchType.EAGER)
+    @ToString.Exclude
+    private Set<Progress> progressSet;
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;

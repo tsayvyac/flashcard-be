@@ -28,6 +28,8 @@ public class Progress implements Serializable {
     @Column(nullable = false)
     private Integer streak;
 
+    private Integer lastScore;
+
     @Column(nullable = false)
     @Temporal(TemporalType.DATE)
     private LocalDate nextDate;
@@ -37,6 +39,10 @@ public class Progress implements Serializable {
     @JoinColumn(name = "flashcard_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Flashcard flashcard;
+
+    @ManyToOne
+    @JoinColumn(name = "learner_id", nullable = false)
+    private Learner learner;
 
     @Override
     public final boolean equals(Object o) {

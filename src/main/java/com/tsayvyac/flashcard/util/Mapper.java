@@ -1,6 +1,7 @@
 package com.tsayvyac.flashcard.util;
 
 import com.tsayvyac.flashcard.controller.request.RegisterRequest;
+import com.tsayvyac.flashcard.controller.response.AuthResponse;
 import com.tsayvyac.flashcard.dto.*;
 import com.tsayvyac.flashcard.model.*;
 import org.springframework.data.domain.Page;
@@ -83,5 +84,17 @@ public class Mapper {
                 .password(encoder.encode(request.password()))
                 .role(Role.ROLE_USER)
                 .build();
+    }
+
+    public static AuthResponse authRequestToResponse(String token, Learner learner) {
+        LearnerDto learnerDto = new LearnerDto(
+                learner.getUid(),
+                learner.getUsername(),
+                learner.getEmail()
+        );
+        return new AuthResponse(
+                learnerDto,
+                token
+        );
     }
 }
