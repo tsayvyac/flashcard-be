@@ -2,6 +2,7 @@ package com.tsayvyac.flashcard.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 public record FlashcardDto(
@@ -11,5 +12,5 @@ public record FlashcardDto(
         Long cardSetId,
         @JsonFormat(pattern = "yyyy-MM-dd")
         LocalDate nextDate
-) {
+) implements Serializable {
 }

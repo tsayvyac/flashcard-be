@@ -8,6 +8,11 @@ app:
     max-pool-size: 4
     queue-capacity: 40
 
+security:
+  jwt:
+    secret-key:
+    expiration: 259200000 # = 3 days
+
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -25,3 +30,4 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+    database: postgresql

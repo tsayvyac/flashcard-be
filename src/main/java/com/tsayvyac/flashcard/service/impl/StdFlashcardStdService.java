@@ -40,6 +40,7 @@ class StdFlashcardStdService implements FlashcardService {
                 .repetitions(0)
                 .streak(0)
                 .nextDate(LocalDate.of(2001, Month.MAY, 23))
+                .learner(cardSet.getLearner())
                 .flashcard(flashcard)
                 .build();
         flashcard.setProgress(progress);

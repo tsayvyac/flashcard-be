@@ -17,6 +17,7 @@ public class GoodScoreStrategy implements ComputeProgressStrategy {
         return Progress.builder()
                 .repetitions(existing.getRepetitions() + 1)
                 .streak(existing.getStreak() + 1)
+                .lastScore(1)
                 .nextDate(nextD)
                 .build();
     }

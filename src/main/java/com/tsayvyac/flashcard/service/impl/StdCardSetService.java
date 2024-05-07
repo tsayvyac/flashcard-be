@@ -3,10 +3,10 @@ package com.tsayvyac.flashcard.service.impl;
 import com.tsayvyac.flashcard.dto.CardSetDto;
 import com.tsayvyac.flashcard.dto.FlashcardDto;
 import com.tsayvyac.flashcard.dto.PageDto;
-import com.tsayvyac.flashcard.dto.SetsInfoDto;
 import com.tsayvyac.flashcard.exception.NotFoundException;
 import com.tsayvyac.flashcard.model.CardSet;
 import com.tsayvyac.flashcard.model.Flashcard;
+import com.tsayvyac.flashcard.model.Learner;
 import com.tsayvyac.flashcard.repository.CardSetRepository;
 import com.tsayvyac.flashcard.repository.FlashcardRepository;
 import com.tsayvyac.flashcard.service.CardSetService;
@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,19 +37,22 @@ class StdCardSetService implements CardSetService {
     private final FlashcardRepository flashcardRepository;
 
     @Override
+    @Transactional
     public CardSetDto createCardSet(CardSetDto dto) {
-        CardSet cardSet = cardSetRepository.save(Mapper.dtoToCardSet(dto));
-        log.info("Card set with id {} was saved successfully!", cardSet.getId());
+        Learner learner = getAuthenticated();
+        CardSet cardSet = cardSetRepository.save(Mapper.dtoToCardSet(dto, learner));
 
+        log.info("Card set with id {} was saved successfully!", cardSet.getId());
         return new CardSetDto(cardSet.getId(), cardSet.getName(), 0, 0);
     }
 
     @Override
     public PageDto<CardSetDto> getCardSets(int pageNo, int pageSize, boolean isOnlyRep) {
-        Page<CardSet> cardSets = cardSetRepository.findAll(PageRequest.of(pageNo, pageSize));
+        Page<CardSet> cardSets = cardSetRepository.findAllByLearner(PageRequest.of(pageNo, pageSize), getAuthenticated());
         Predicate<CardSetDto> predicate = isOnlyRep
                 ? i -> i.countRep() > 0
                 : i -> true;
+
         return convertPageToPageDto(
                 cardSets,
                 predicate,
@@ -57,10 +62,10 @@ class StdCardSetService implements CardSetService {
     }
 
     @Override
-    public List<SetsInfoDto> getSetsInfo() {
-        List<CardSet> cardSetList = cardSetRepository.findAll();
+    public List<CardSetDto> getSetsInfo() {
+        List<CardSet> cardSetList = cardSetRepository.findAllByLearner(getAuthenticated());
         return cardSetList.stream()
-                .map(Mapper::cardSetToSetsInfo)
+                .map(cardSet -> Mapper.cardSetToDto(cardSet, 0 ,0))
                 .toList();
     }
 
@@ -75,7 +80,7 @@ class StdCardSetService implements CardSetService {
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     public PageDto<FlashcardDto> getFlashcardsInSet(Long id, int pageNo, int pageSize) {
-        CardSet cardSet = cardSetRepository.getReferenceById(id);
+        CardSet cardSet = getById(id);
         Page<Flashcard> flashcards = flashcardRepository.findAllPagesByCardSet(cardSet, PageRequest.of(pageNo, pageSize));
         List<FlashcardDto> listOfDto = flashcards.getContent().stream().map(f -> Mapper.flashcardToDto(f, id)).toList();
 
@@ -85,7 +90,7 @@ class StdCardSetService implements CardSetService {
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     public List<FlashcardDto> getFlashcardsFromSet(Long id, boolean isCram) {
-        CardSet cardSet = cardSetRepository.getReferenceById(id);
+        CardSet cardSet = getById(id);
         List<Flashcard> flashcards = isCram
                 ? flashcardRepository.findAllByCardSet(cardSet)
                 : flashcardRepository.findFlashcardsForRepetition(cardSet);
@@ -97,7 +102,7 @@ class StdCardSetService implements CardSetService {
     @Transactional
     public CardSetDto updateCardSet(Long id, CardSetDto dto) {
         CardSet existing = getById(id);
-        CardSet incomplete = Mapper.dtoToCardSet(dto);
+        CardSet incomplete = Mapper.dtoToCardSet(dto, getAuthenticated());
         try {
             Patcher.patchUpdate(existing, incomplete);
             cardSetRepository.save(existing);
@@ -116,8 +121,13 @@ class StdCardSetService implements CardSetService {
         log.info("Card set with id {} was deleted!", id);
     }
 
+    private Learner getAuthenticated() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (Learner) authentication.getPrincipal();
+    }
+
     private CardSet getById(Long id) {
-        return cardSetRepository.findById(id)
+        return cardSetRepository.findByIdAndLearner(id, getAuthenticated())
                 .orElseThrow(() -> new NotFoundException("Card set with id " + id + NOT_FOUND));
     }
 

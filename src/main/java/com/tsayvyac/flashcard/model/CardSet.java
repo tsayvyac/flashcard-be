@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 
@@ -14,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"flashcards"})
-public class CardSet {
+public class CardSet implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "card_set_seq_gen")
     @SequenceGenerator(name = "card_set_seq_gen", sequenceName = "card_set_seq", allocationSize = 1)
@@ -23,10 +24,9 @@ public class CardSet {
     @Column(nullable = false)
     private String name;
 
-//    @ManyToOne
-//    @JoinColumn(name = "learner_id", nullable = false)
-//    @ToString.Exclude
-//    private Learner learner;
+    @ManyToOne
+    @JoinColumn(name = "learner_id", nullable = false)
+    private Learner learner;
 
     @OneToMany(mappedBy = "cardSet", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Flashcard> flashcards;
