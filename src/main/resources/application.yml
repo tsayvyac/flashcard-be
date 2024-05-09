@@ -10,18 +10,24 @@ app:
 
 security:
   jwt:
-    secret-key:
+    secret-key: 1E5E6CC1B3B46881FF73493F2185E3A2A772F8B1725D55B3888B363422F1AF8B
     expiration: 259200000 # = 3 days
 
 spring:
+#  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    url: jdbc:postgresql://localhost:5432/flashcard
+#    username: postgres
+#    password: postgres
+
+  h2:
+    console:
+      enabled: true
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/flashcard
-    username: postgres
-    password: postgres
-#    tomcat:
-#      test-while-idle: true                  Keep the connection alive if idle for a long time (needed for production)
-#      validation-query: SELECT 1                                                     Send this query for staying alive
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:flashcarddb
+    username: flashcard
+    password: flashcard
 
   jpa:
     show-sql: true
@@ -29,5 +35,7 @@ spring:
       ddl-auto: create-drop
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-    database: postgresql
+        dialect: org.hibernate.dialect.H2Dialect
+    #        dialect: org.hibernate.dialect.PostgreSQLDialect
+    database: h2
+#    database: postgresql

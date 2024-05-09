@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Slf4j(topic = "LEARNER_SERVICE")
 @Service
 @RequiredArgsConstructor
-class StdLearnerStdService implements LearnerService {
+class StdLearnerService implements LearnerService {
     private final ProgressRepository progressRepository;
 
     @Override

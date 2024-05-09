@@ -25,7 +25,7 @@ import static com.tsayvyac.flashcard.util.Constant.Str.NOT_FOUND;
 @Slf4j(topic = "FLASHCARD_SERVICE")
 @Service
 @RequiredArgsConstructor
-class StdFlashcardStdService implements FlashcardService {
+class StdFlashcardService implements FlashcardService {
     private final AsyncService asyncService;
     private final FlashcardRepository flashcardRepository;
     private final CardSetRepository cardSetRepository;
