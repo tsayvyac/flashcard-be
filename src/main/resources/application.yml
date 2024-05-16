@@ -1,41 +1,4 @@
-server:
-  servlet:
-    context-path: /api/v1
-
-app:
-  async:
-    core-pool-size: 2
-    max-pool-size: 4
-    queue-capacity: 40
-
-security:
-  jwt:
-    secret-key: 1E5E6CC1B3B46881FF73493F2185E3A2A772F8B1725D55B3888B363422F1AF8B
-    expiration: 259200000 # = 3 days
-
 spring:
-#  datasource:
-#    driver-class-name: org.postgresql.Driver
-#    url: jdbc:postgresql://localhost:5432/flashcard
-#    username: postgres
-#    password: postgres
-
-  h2:
-    console:
-      enabled: true
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:flashcarddb
-    username: flashcard
-    password: flashcard
-
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: create-drop
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-    #        dialect: org.hibernate.dialect.PostgreSQLDialect
-    database: h2
-#    database: postgresql
+  profiles:
+    # put "inmemory" instead of "pg" if you want to use in memory datasource configuration
+    active: pg
