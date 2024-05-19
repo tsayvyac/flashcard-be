@@ -10,13 +10,11 @@ import com.tsayvyac.flashcard.model.Progress;
 import com.tsayvyac.flashcard.repository.CardSetRepository;
 import com.tsayvyac.flashcard.repository.FlashcardRepository;
 import com.tsayvyac.flashcard.util.Mapper;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
@@ -42,11 +40,13 @@ class CardSetServiceTest {
     private StdCardSetService cardSetService;
     private static Learner learner;
     private static List<CardSet> cardSetList;
+    private static MockedStatic<SecurityContextHolder> mockedSec;
+    private static MockedStatic<Mapper> mockedMap;
 
     @BeforeAll
     static void setUp() {
-        mockStatic(SecurityContextHolder.class);
-        mockStatic(Mapper.class);
+        mockedSec = mockStatic(SecurityContextHolder.class);
+        mockedMap = mockStatic(Mapper.class);
         cardSetList = new ArrayList<>();
         CardSet cardSet1 = CardSet.builder()
                 .name("Test set 1")
@@ -74,6 +74,12 @@ class CardSetServiceTest {
         when(authentication.getPrincipal()).thenReturn(learner);
     }
 
+    @AfterAll
+    static void close() {
+        mockedSec.close();
+        mockedMap.close();
+    }
+
     @Test
     void createCardSet_SuccessfullyCreated_ReturnCardSetDto() {
         CardSet cardSet = CardSet.builder()
@@ -93,6 +99,20 @@ class CardSetServiceTest {
         Page<CardSet> mockedPage = mock(Page.class);
         when(mockedPage.getContent()).thenReturn(cardSetList);
         when(cardSetRepository.findAllByLearner(any(), any())).thenReturn(mockedPage);
+        when(Mapper.cardSetToDto(any(CardSet.class), anyInt(), anyInt()))
+                .thenAnswer(invocation -> {
+                    CardSet cardSet = invocation.getArgument(0);
+                    return new CardSetDto(cardSet.getId(), cardSet.getName(), 0, 0); // Simplified mapping for this example
+                });
+
+        when(Mapper.mapToPageDto(anyList(), anyInt(), anyInt(), any(Page.class)))
+                .thenAnswer(invocation -> {
+                    List<CardSetDto> listOfDto = invocation.getArgument(0);
+                    int pageNo = invocation.getArgument(1);
+                    int pageSize = invocation.getArgument(2);
+                    Page<CardSet> page = invocation.getArgument(3);
+                    return new PageDto<>(listOfDto, pageNo, pageSize, page.getTotalElements(), page.getTotalPages(), page.isLast());
+                });
 
         PageDto<CardSetDto> pageDto = cardSetService.getCardSets(0, 10, false);
 
@@ -125,6 +145,21 @@ class CardSetServiceTest {
         when(cardSetRepository.findByIdAndLearner(1L, learner)).thenReturn(Optional.of(cardSet));
         when(mockedPage.getContent()).thenReturn(flashcardList);
         when(flashcardRepository.findAllPagesByCardSet(cardSet, PageRequest.of(0, 10))).thenReturn(mockedPage);
+        when(Mapper.flashcardToDto(any(Flashcard.class), eq(1L)))
+                .thenAnswer(invocation -> {
+                    Flashcard flashcard = invocation.getArgument(0);
+                    Long cardSetId = invocation.getArgument(1);
+                    return new FlashcardDto(flashcard.getId(), flashcard.getFront(), flashcard.getBack(), cardSetId, flashcard.getProgress().getNextDate());
+                });
+
+        when(Mapper.mapToPageDto(anyList(), anyInt(), anyInt(), any(Page.class)))
+                .thenAnswer(invocation -> {
+                    List<FlashcardDto> listOfDto = invocation.getArgument(0);
+                    int pageNo = invocation.getArgument(1);
+                    int pageSize = invocation.getArgument(2);
+                    Page<Flashcard> page = invocation.getArgument(3);
+                    return new PageDto<>(listOfDto, pageNo, pageSize, page.getTotalElements(), page.getTotalPages(), page.isLast());
+                });
 
         PageDto<FlashcardDto> flashcardDtoPageDto = cardSetService.getFlashcardsInSet(1L, 0, 10);
 

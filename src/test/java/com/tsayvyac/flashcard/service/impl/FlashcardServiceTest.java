@@ -8,15 +8,9 @@ import com.tsayvyac.flashcard.model.Progress;
 import com.tsayvyac.flashcard.repository.CardSetRepository;
 import com.tsayvyac.flashcard.repository.FlashcardRepository;
 import com.tsayvyac.flashcard.util.Mapper;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,11 +33,13 @@ class FlashcardServiceTest {
     @InjectMocks
     private StdFlashcardService flashcardService;
     private static Learner learner;
+    private static MockedStatic<SecurityContextHolder> mockedSec;
+    private static MockedStatic<Mapper> mockedMap;
 
     @BeforeAll
     static void setUp() {
-        mockStatic(SecurityContextHolder.class);
-        mockStatic(Mapper.class);
+        mockedSec = mockStatic(SecurityContextHolder.class);
+        mockedMap = mockStatic(Mapper.class);
     }
 
     @BeforeEach
@@ -54,6 +50,12 @@ class FlashcardServiceTest {
                 .build();
         SecurityContext securityContext = mock(SecurityContext.class);
         when(SecurityContextHolder.getContext()).thenReturn(securityContext);
+    }
+
+    @AfterAll
+    static void close() {
+        mockedSec.close();
+        mockedMap.close();
     }
 
     @Test
