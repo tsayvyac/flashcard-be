@@ -1,4 +1,4 @@
 spring:
   profiles:
-    # put "inmemory" instead of "pg" if you want to use in memory datasource configuration
-    active: pg
+    # put "pg" instead of "h2" if you want to use PostgreSQL database configuration
+    active: h2

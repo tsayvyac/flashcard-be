@@ -16,9 +16,9 @@ security:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/flashcard
-    username: postgres
-    password: postgres
+    url: # insert url
+    username: # insert username
+    password: # insert password
 
   jpa:
     show-sql: true
