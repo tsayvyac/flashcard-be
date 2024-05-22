@@ -40,7 +40,7 @@ public class Learner implements Serializable, UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "learner", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "learner", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private Set<CardSet> cardSets;
 
