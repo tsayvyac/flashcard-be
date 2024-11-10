@@ -8,13 +8,27 @@
 ```
 git clone https://github.com/tsayvyac/flashcard-be.git
 ```
-2. This application initially uses an H2 in-memory database for demonstration purposes. To switch to PostgreSQL,
-   update the `spring.profiles.active` setting in `src/main/application.yml` by replacing "h2" with "pg".
-   Then, configure `src/main/application-pg.yml` with the PostgreSQL URL, username, and password.
-   If you prefer to use H2, no additional configuration is needed; simply start the application.
-> :warning: After this step you can run project using IDE or follow next steps.
-3. Go to the folder that was cloned and write in terminal (cmd):
+2. Create `.env` file in the root directory
+3. Add the necessary variables to the `.env` file:
 ```
-mvn spring-boot:run
+# SERVER
+CONTEXT_PATH=
+SERVER_PORT= # Default 8080
+
+# DATASOURCE
+DATASOURCE_URL=
+DATASOURCE_USERNAME=
+DATASOURCE_PASSWORD=
+
+# SECURITY
+JWT_SECRET_KEY=
+JWT_EXPIRATION=
+
+# THREAD POOL
+CORE_POOL_SIZE= # Default is 2
+MAX_POOL_SIZE= # Default is 4
+QUEUE_CAPACITY= # Default is 40
 ```
-4. Run [frontend](https://github.com/tsayvyac/flashcard-fe-vite) and use the application
+4. Save the `.env` file
+5. Run the `scripts/run.sh` script, using IDE or Docker
+6. Run [frontend](https://github.com/tsayvyac/flashcard-fe-vite)
