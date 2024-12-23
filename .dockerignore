@@ -1,0 +1,43 @@
+# Maven build directory
+target/
+
+# Gradle build directory
+build/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE project files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.launch
+*.classpath
+.project
+.settings/
+
+# Git files
+.git/
+.gitignore
+
+
+# Maven wrapper files (if not needed)
+.mvn/
+mvnw
+mvnw.cmd
+
+# Exclude test reports and coverage data
+test-output/
+coverage/
+
+# Exclude any secret files
+*.env
