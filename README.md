@@ -28,16 +28,15 @@ The REST API architectural style is used to communicate between the system and t
 ```
 git clone https://github.com/tsayvyac/flashcard-be.git
 ```
-2. Create `.env` file in the root directory
-3. Add the necessary variables to the `.env.example` file:
-4. Erase `.example` and save the `.env` file
-5. Run the `scripts/run.sh` script to start the application, or use IDE
-7. It can also be run in a docker container
+2. Add the necessary variables to the `.env.example` file:
+3. Erase `.example` and save the `.env` file
+4. Run the `scripts/run.sh` script to start the application, or use IDE
+5. It can also be run in a docker container
 ```
 docker build -t [tag] .
 docker run --env-file ./.env [tag or id]
 ```
-7. Run [frontend](https://github.com/tsayvyac/flashcard-fe-vite).
+6. Run [frontend](https://github.com/tsayvyac/flashcard-fe-vite).
 
 # More
 GitLab CI/CD pipeline was also created for this project. See [GitLab repository](https://gitlab.fel.cvut.cz/tsayvyac/zks_2024_semestral_work_tsayvyac_ulcheyev).
