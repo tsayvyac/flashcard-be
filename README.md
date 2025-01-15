@@ -1,5 +1,8 @@
+# More
+GitLab CI/CD pipeline was also created for this project. See [GitLab repository](https://gitlab.fel.cvut.cz/tsayvyac/zks_2024_semestral_work_tsayvyac_ulcheyev).
+
 1. [What is Flashcards web application?](#what-is-flashcards-web-application)
-2. [What technologies is used?](#what-technologies-is-used)
+2. [What technologies is used?](#what-technologies-are-used)
 3. [Prerequisite](#prerequisite)
 4. [How to run?](#how-to-run)
 5. [More](#more)
@@ -37,6 +40,3 @@ docker build -t [tag] .
 docker run --env-file ./.env [tag or id]
 ```
 6. Run [frontend](https://github.com/tsayvyac/flashcard-fe-vite).
-
-# More
-GitLab CI/CD pipeline was also created for this project. See [GitLab repository](https://gitlab.fel.cvut.cz/tsayvyac/zks_2024_semestral_work_tsayvyac_ulcheyev).
